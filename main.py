@@ -4,18 +4,30 @@ from langchain.tools import tool
 from langchain.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain_tavily import TavilySearch
+from typing import List
+from pydantic import BaseModel, Field
 
 load_dotenv()
 
+class Source(BaseModel):
+    """Schema for a source used by the agent"""
+
+    url: str = Field(description="The URL of the source")
+
+class AgentResponse(BaseModel):
+    """Schema for agent response with answer and source"""
+
+    answer: str = Field(description="The agent's answer to the query")
+    sources: List[Source] = Field(default_factory=list, description="ist of source used to generate the answer")
 
 
 llm = ChatOpenAI()
 tools = [TavilySearch()]
-agent = create_agent(model=llm, tools=tools)
+agent = create_agent(model=llm, tools=tools, response_format=AgentResponse)
 
 def main():
     print("Hello from langchain-course!")
-    results = agent.invoke({"messages": [HumanMessage(content="Busca 3 curiosidades de la historia de Halo (lore expandido) que probablemente un fan con conocimiento medio no conozca")]})
+    results = agent.invoke({"messages": [HumanMessage(content="Busca 3 curiosidades especificas de Misa Amane de death note")]})
     print(results)
 
 
