@@ -38,7 +38,10 @@ El conflicto culminó con la activación de los Halos, lo cual acabó con la ame
     )
 
     llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo")
+    chain = summary_prompt_template | llm
+    response = chain.invoke(input= {"information": info})
 
+    print(response.content)
     
 
 
