@@ -18,6 +18,6 @@ def triple(num: float) -> float:
 
 tools = [triple, TavilySearch(max_results=1)]
 
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0).bind_tools(tools)
+llm = ChatOpenAI(model="gpt-4.1-mini", temperature=0).bind_tools(tools)
 
 
