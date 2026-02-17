@@ -1,23 +1,21 @@
 from dotenv import load_dotenv
-from langchain_core.tools import tool
-from langchain_openai import ChatOpenAI
-from langchain_tavily import TavilySearch
+from langgraph.graph import MessagesState
+from langgraph.prebuilt import ToolNode
+from react import llm, tools
 
 load_dotenv()
 
-@tool
-def triple(num: float) -> float:
+SYSTEM_MESSAGE="""
+    You are a helpful assistant that can use tools to answer questions.
+"""
+
+def run_agent_reasoning(state: MessagesState) -> MessagesState:
     """
+    Run the agent reasoning node.
     
-    param nuim: a number to triple
-    returns: the triple of the input number
-
     """
 
-    return float(num) * 3
+    response = llm.invoke([{"role": "system", "content": SYSTEM_MESSAGE}, *state["messages"]])
+    return {"messages": [response]}
 
-tools = [triple, TavilySearch(max_results=1)]
-
-llm = ChatOpenAI(model="gpt-3.5-turbo", temperature=0).bind_tools(tools)
-
-
+tool_node = ToolNode(tools=tools)
